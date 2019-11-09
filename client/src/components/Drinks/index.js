@@ -1,6 +1,15 @@
 import React from "react";
 import Strapi from "strapi-sdk-javascript";
-import { Box, Heading, Text, Image, Card, Button, Mask } from "gestalt";
+import {
+  Box,
+  Heading,
+  Text,
+  Image,
+  Card,
+  Button,
+  Mask,
+  IconButton
+} from "gestalt";
 import { Link } from "react-router-dom";
 
 const apiURL = process.env.API_URL || "http://localhost:1337";
@@ -43,6 +52,25 @@ class Drinks extends React.Component {
       console.error(err);
     }
   }
+
+  addToCart = drink => {
+    let alreadyInCart = this.state.cartItems.findIndex(
+      item => item.id === drink.id
+    );
+
+    if (alreadyInCart === -1) {
+      const updatedItems = this.state.cartItems.concat({
+        ...drink,
+        quantity: 1
+      });
+
+      this.setState({ cartItems: updatedItems });
+    } else {
+      const updatedItems = [...this.state.cartItems];
+      updatedItems[alreadyInCart].quantity += 1;
+      this.setState({ cartItems: updatedItems });
+    }
+  };
 
   render() {
     const { brand, drinks, cartItems } = this.state;
@@ -96,7 +124,11 @@ class Drinks extends React.Component {
                     <Text color="orchid">£{drink.price}</Text>
                     <Box marginTop={2}>
                       <Text bold size="xl">
-                        <Button color="blue" text="Add to cart" />
+                        <Button
+                          onClick={() => this.addToCart(drink)}
+                          color="blue"
+                          text="Add to cart"
+                        />
                       </Text>
                     </Box>
                   </Box>
@@ -112,7 +144,7 @@ class Drinks extends React.Component {
               display="flex"
               direction="column"
               alignItems="center"
-              paddin={2}
+              padding={2}
             >
               <Heading align="center" size="md">
                 Basket
@@ -120,6 +152,21 @@ class Drinks extends React.Component {
               <Text color="gray" italic>
                 {cartItems.length} items selected
               </Text>
+
+              {cartItems.map(item => (
+                <Box key={item.id} display="flex" alignItems="center">
+                  <Text>
+                    {item.name} x {item.quantity} -
+                    {(item.quantity * item.price).toFixed(2)}
+                  </Text>
+                  <IconButton
+                    accessibilityLabel="Delete Item"
+                    icon="cancel"
+                    size="sm"
+                    iconColor="red"
+                  ></IconButton>
+                </Box>
+              ))}
 
               <Box
                 display="flex"
