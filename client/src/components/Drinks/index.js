@@ -12,6 +12,8 @@ import {
 } from "gestalt";
 import { Link } from "react-router-dom";
 
+import { calculatePrice } from "../../utils";
+
 const apiURL = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiURL);
 
@@ -154,17 +156,17 @@ class Drinks extends React.Component {
               alignItems="center"
               padding={2}
             >
-              <Heading align="center" size="md">
+              <Heading align="center" size="sm">
                 Basket
               </Heading>
               <Text color="gray" italic>
-                {cartItems.length} items selected
+                Items in the basket: {cartItems.length}
               </Text>
 
               {cartItems.map(item => (
                 <Box key={item.id} display="flex" alignItems="center">
                   <Text>
-                    {item.name} x {item.quantity} -
+                    {item.name} x {item.quantity} - £
                     {(item.quantity * item.price).toFixed(2)}
                   </Text>
                   <IconButton
@@ -188,7 +190,7 @@ class Drinks extends React.Component {
                     <Text color="red">Your basket is empty</Text>
                   )}
                 </Box>
-                <Text size="lg">Total: £0.00</Text>
+                <Text size="lg">Total: {calculatePrice(cartItems)}</Text>
                 <Text>
                   <Link to="/checkout">Checkout</Link>
                 </Text>
