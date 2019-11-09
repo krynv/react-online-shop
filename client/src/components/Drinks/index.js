@@ -72,6 +72,14 @@ class Drinks extends React.Component {
     }
   };
 
+  removeItemFromCart = givenItemToRemove => {
+    let filteredItems = this.state.cartItems.filter(
+      item => item.id !== givenItemToRemove
+    );
+
+    this.setState({ cartItems: filteredItems });
+  };
+
   render() {
     const { brand, drinks, cartItems } = this.state;
 
@@ -164,6 +172,7 @@ class Drinks extends React.Component {
                     icon="cancel"
                     size="sm"
                     iconColor="red"
+                    onClick={() => this.removeItemFromCart(item.id)}
                   ></IconButton>
                 </Box>
               ))}
