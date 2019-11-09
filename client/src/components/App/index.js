@@ -12,6 +12,7 @@ import {
 import Strapi from "strapi-sdk-javascript";
 import { Link } from "react-router-dom";
 
+import LoadingIndicator from "../LoadingIndicator";
 import "./App.css";
 
 const apiURL = process.env.API_URL || "http://localhost:1337";
@@ -20,7 +21,8 @@ const strapi = new Strapi(apiURL);
 class App extends React.Component {
   state = {
     brands: [],
-    searchTerm: ""
+    searchTerm: "",
+    loadingBrands: true
   };
 
   async componentDidMount() {
@@ -44,10 +46,12 @@ class App extends React.Component {
       });
 
       this.setState({
-        brands: data.brands
+        brands: data.brands,
+        loadingBrands: false
       });
     } catch (err) {
       console.error(err);
+      this.setState({ loadingBrands: false });
     }
   }
 
@@ -65,7 +69,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { searchTerm } = this.state;
+    const { searchTerm, loadingBrands } = this.state;
 
     return (
       <Container>
@@ -127,6 +131,8 @@ class App extends React.Component {
             </Box>
           ))}
         </Box>
+
+        {<LoadingIndicator show={loadingBrands}/>}
       </Container>
     );
   }
