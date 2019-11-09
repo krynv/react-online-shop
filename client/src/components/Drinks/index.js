@@ -1,6 +1,7 @@
 import React from "react";
 import Strapi from "strapi-sdk-javascript";
-import { Box, Heading, Text, Image, Card, Button } from "gestalt";
+import { Box, Heading, Text, Image, Card, Button, Mask } from "gestalt";
+import { Link } from "react-router-dom";
 
 const apiURL = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiURL);
@@ -8,7 +9,8 @@ const strapi = new Strapi(apiURL);
 class Drinks extends React.Component {
   state = {
     drinks: [],
-    brand: ""
+    brand: "",
+    cartItems: []
   };
 
   async componentDidMount() {
@@ -43,7 +45,7 @@ class Drinks extends React.Component {
   }
 
   render() {
-    const { brand, drinks } = this.state;
+    const { brand, drinks, cartItems } = this.state;
 
     return (
       <Box
@@ -51,6 +53,11 @@ class Drinks extends React.Component {
         display="flex"
         justifyContent="center"
         alignItems="start"
+        dangerouslySetInlineStyle={{
+          __style: {
+            flexWrap: "wrap-reverse"
+          }
+        }}
       >
         <Box display="flex" direction="column" alignItems="center">
           <Box margin={2}>
@@ -97,6 +104,41 @@ class Drinks extends React.Component {
               </Box>
             ))}
           </Box>
+        </Box>
+
+        <Box alignSelf="end" marginTop={2} marginLeft={8}>
+          <Mask shape="rounded" wash>
+            <Box
+              display="flex"
+              direction="column"
+              alignItems="center"
+              paddin={2}
+            >
+              <Heading align="center" size="md">
+                Basket
+              </Heading>
+              <Text color="gray" italic>
+                {cartItems.length} items selected
+              </Text>
+
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                direction="column"
+              >
+                <Box margin={2}>
+                  {cartItems.length === 0 && (
+                    <Text color="red">Your basket is empty</Text>
+                  )}
+                </Box>
+                <Text size="lg">Total: £0.00</Text>
+                <Text>
+                  <Link to="/checkout">Checkout</Link>
+                </Text>
+              </Box>
+            </Box>
+          </Mask>
         </Box>
       </Box>
     );
