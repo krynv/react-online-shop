@@ -12,7 +12,7 @@ import {
 } from "gestalt";
 import { Link } from "react-router-dom";
 
-import { calculatePrice } from "../../utils";
+import { calculatePrice, setCart, getCart } from "../../utils";
 
 const apiURL = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiURL);
@@ -49,7 +49,11 @@ class Drinks extends React.Component {
         }
       });
 
-      this.setState({ drinks: data.brand.drinks, brand: data.brand.name });
+      this.setState({
+        drinks: data.brand.drinks,
+        brand: data.brand.name,
+        cartItems: getCart()
+      });
     } catch (err) {
       console.error(err);
     }
@@ -61,16 +65,20 @@ class Drinks extends React.Component {
     );
 
     if (alreadyInCart === -1) {
-      const updatedItems = this.state.cartItems.concat({
+      let updatedItems = this.state.cartItems.concat({
         ...drink,
         quantity: 1
       });
 
-      this.setState({ cartItems: updatedItems });
+      this.setState({ cartItems: updatedItems }, () => {
+        setCart(updatedItems);
+      });
     } else {
-      const updatedItems = [...this.state.cartItems];
+      let updatedItems = [...this.state.cartItems];
       updatedItems[alreadyInCart].quantity += 1;
-      this.setState({ cartItems: updatedItems });
+      this.setState({ cartItems: updatedItems }, () => {
+        setCart(updatedItems);
+      });
     }
   };
 
@@ -79,7 +87,9 @@ class Drinks extends React.Component {
       item => item.id !== givenItemToRemove
     );
 
-    this.setState({ cartItems: filteredItems });
+    this.setState({ cartItems: filteredItems }, () => {
+      setCart(filteredItems);
+    });
   };
 
   render() {
