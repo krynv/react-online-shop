@@ -13,7 +13,8 @@
   },
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "description": {
       "type": "richtext"
@@ -24,7 +25,8 @@
       "plugin": "upload"
     },
     "price": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": true
     },
     "brand": {
       "model": "brand",
