@@ -8,24 +8,36 @@ const apiURL = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiURL);
 
 class App extends React.Component {
+  state = {
+    brands: []
+  };
+
   async componentDidMount() {
-    const response = await strapi.request("POST", "/graphql", {
-      data: {
-        query: `{
-					brands {
-						id
+    try {
+      const { data } = await strapi.request("POST", "/graphql", {
+        data: {
+          query: `
+		  	{
+				brands {
+					id
+					name
+					description
+					createdAt
+					image {
+						url
 						name
-						description
-						createdAt
-						image {
-							url
-							name
-						}
 					}
-				}`
-      }
-    });
-    console.log(response);
+				}
+			}`
+        }
+      });
+
+      this.setState({
+        brands: data.brands
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   render() {
