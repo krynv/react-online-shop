@@ -52,13 +52,14 @@ class App extends React.Component {
           </Heading>
         </Box>
 
-        <Box display="flex" justifyContent="around">
+        <Box wrap display="flex" justifyContent="around">
           {brands.map(brand => (
-            <Box key={brand.id} width={200} margin={2}>
+            <Box key={brand.id} width={200} margin={2} paddingY={4}>
               <Card
                 image={
                   <Box height={200} width={200}>
                     <Image
+                      fit="cover"
                       alt={brand.name}
                       naturalHeight={1}
                       naturalWidth={1}
