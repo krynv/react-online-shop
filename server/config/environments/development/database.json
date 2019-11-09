@@ -1,0 +1,20 @@
+{
+  "defaultConnection": "default",
+  "connections": {
+    "default": {
+      "connector": "strapi-hook-mongoose",
+      "settings": {
+        "database": "react-brewery",
+        "host": "react-brewery-p1iom.mongodb.net",
+        "srv": "true",
+        "port": 27017,
+        "username": "VK",
+        "password": ""
+      },
+      "options": {
+        "authenticationDatabase": "admin",
+        "ssl": true
+      }
+    }
+  }
+}
