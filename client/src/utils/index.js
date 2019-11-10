@@ -26,3 +26,10 @@ export const setToken = (value, tokenKey = TOKEN_KEY) => {
     localStorage.setItem(tokenKey, JSON.stringify(value));
   }
 };
+
+export const getToken = (tokenKey = TOKEN_KEY) => {
+  if (localStorage && localStorage.getItem(tokenKey)) {
+    return JSON.parse(localStorage.getItem(tokenKey));
+  }
+  return null;
+};
