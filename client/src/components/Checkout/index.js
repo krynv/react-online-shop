@@ -1,5 +1,11 @@
 import React from "react";
 import {
+  Elements,
+  StripeProvider,
+  CardElement,
+  injectStripe
+} from "react-stripe-elements";
+import {
   Container,
   Box,
   Heading,
@@ -13,7 +19,7 @@ import {
 import ToastMessage from "../ToastMessage";
 import { getCart, calculatePrice } from "../../utils";
 
-class Checkout extends React.Component {
+class _CheckoutForm extends React.Component {
   state = {
     cartItems: [],
     address: "",
@@ -149,6 +155,11 @@ class Checkout extends React.Component {
                   onChange={this.handleChange}
                 />
 
+                <CardElement
+                  id="stripe__input"
+                  onReady={input => input.focus()}
+                />
+
                 <button id="stripe__button" type="submit">
                   Submit
                 </button>
@@ -251,6 +262,16 @@ const ConfirmationModal = ({
       </Text>
     )}
   </Modal>
+);
+
+const CheckoutForm = injectStripe(_CheckoutForm);
+
+const Checkout = () => (
+  <StripeProvider apiKey="pk_test_iqtLYf7RF4bSu0Tr47wDB6gF004xDQsO6v">
+    <Elements>
+      <CheckoutForm />
+    </Elements>
+  </StripeProvider>
 );
 
 export default Checkout;
