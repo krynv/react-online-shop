@@ -11,7 +11,7 @@ import {
 } from "gestalt";
 
 import ToastMessage from "../ToastMessage";
-import { getCart, calculatePrice, clearToken } from "../../utils";
+import { getCart, calculatePrice } from "../../utils";
 
 class Checkout extends React.Component {
   state = {
