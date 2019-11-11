@@ -7,6 +7,12 @@ export const calculatePrice = items => {
     .toFixed(2)}`;
 };
 
+export const calculateAmount = items => {
+  return Number(items
+    .reduce((accumulator, item) => accumulator + item.quantity * item.price, 0)
+    .toFixed(2));
+};
+
 export const setCart = (value, cartKey = CART_KEY) => {
   if (localStorage) {
     // check if we actually have access to the local storage

@@ -1,4 +1,5 @@
 import React from "react";
+import Strapi from "strapi-sdk-javascript";
 import {
   Elements,
   StripeProvider,
@@ -15,9 +16,18 @@ import {
   Spinner,
   Button
 } from "gestalt";
+import { withRouter } from "react-router-dom";
 
 import ToastMessage from "../ToastMessage";
-import { getCart, calculatePrice } from "../../utils";
+import {
+  getCart,
+  calculatePrice,
+  clearCart,
+  calculateAmount
+} from "../../utils";
+
+const apiURL = process.env.API_URL || "http://localhost:1337";
+const strapi = new Strapi(apiURL);
 
 class _CheckoutForm extends React.Component {
   state = {
@@ -56,12 +66,47 @@ class _CheckoutForm extends React.Component {
     return !address || !postalCode || !townOrCity || !confirmEmail;
   };
 
-  showToast = toastMessage => {
+  showToast = (toastMessage, redirect = false) => {
     this.setState({ toast: true, toastMessage });
-    setTimeout(() => this.setState({ toast: false, toastMessage: "" }), 5000);
+    setTimeout(
+      () =>
+        this.setState(
+          { toast: false, toastMessage: "" },
+          () => redirect && this.props.history.push("/")
+        ),
+      5000
+    );
   };
 
-  handleSubmitOrder = () => {};
+  handleSubmitOrder = async () => {
+    const { cartItems, townOrCity, address, postalCode } = this.state;
+    const amount = calculateAmount(cartItems);
+
+    this.setState({ orderProcessing: true });
+
+    let token;
+
+    try {
+      const response = await this.props.stripe.createToken();
+      token = response.token.id;
+      await strapi.createEntry("orders", {
+        amount,
+        drinks: cartItems,
+        townOrCity,
+        postalCode,
+        address,
+        token
+      });
+
+      this.setState({ orderProcessing: false, modal: false });
+      clearCart();
+      this.showToast("Your order has been successfully submitted", true);
+    } catch (err) {
+      this.setState({ orderProcessing: false, modal: false });
+      console.error(err);
+      this.showToast(err.message);
+    }
+  };
 
   closeModal = () => this.setState({ modal: false });
 
@@ -264,7 +309,7 @@ const ConfirmationModal = ({
   </Modal>
 );
 
-const CheckoutForm = injectStripe(_CheckoutForm);
+const CheckoutForm = withRouter(injectStripe(_CheckoutForm));
 
 const Checkout = () => (
   <StripeProvider apiKey="pk_test_iqtLYf7RF4bSu0Tr47wDB6gF004xDQsO6v">
