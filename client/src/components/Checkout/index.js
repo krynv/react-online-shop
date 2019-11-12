@@ -79,7 +79,13 @@ class _CheckoutForm extends React.Component {
   };
 
   handleSubmitOrder = async () => {
-    const { cartItems, townOrCity, address, postalCode } = this.state;
+    const {
+      cartItems,
+      townOrCity,
+      address,
+      postalCode,
+      confirmEmail
+    } = this.state;
     const amount = calculateAmount(cartItems);
 
     this.setState({ orderProcessing: true });
@@ -96,6 +102,15 @@ class _CheckoutForm extends React.Component {
         postalCode,
         address,
         token
+      });
+
+      await strapi.request("POST", "/email", {
+        data: {
+          to: confirmEmail,
+          subject: `Order Confirmation - React Brewery ${new Date(Date.now())}`,
+          text: "Your order has been processed",
+          html: "<bold>Thank you for using React Brewery</bold>"
+        }
       });
 
       this.setState({ orderProcessing: false, modal: false });

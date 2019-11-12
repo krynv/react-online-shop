@@ -15,7 +15,7 @@ module.exports = {
 
     // Send charge to Stripe
     const charge = await stripe.charges.create({
-      amount: amount * 100,
+      amount: Math.round(amount * 100),
       currency: "gbp",
       description: `Order ${new Date(Date.now())} - User ${ctx.state.user._id}`,
       source: token
